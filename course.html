@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A focused course learning dashboard." />
+    <title>Course — FreeCourseIndex</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./index.html" aria-label="FreeCourseIndex home">
+          <img class="brand-logo" src="./logo.svg" alt="" />
+          <span>FreeCourseIndex</span>
+        </a>
+        <div class="topbar-actions">
+          <span class="save-status" id="saveStatus">Progress saved locally</span>
+          <button class="icon-button" id="themeToggle" type="button" aria-label="Switch color theme" title="Switch color theme"></button>
+        </div>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="courseTitle">
+          <div class="eyebrow"><span class="live-dot"></span><span id="courseType">Course</span></div>
+          <h1 id="courseTitle"></h1>
+          <p class="hero-description" id="courseDescription"></p>
+          <div class="meta-row" id="courseMeta"></div>
+        </section>
+
+        <section class="progress-card" aria-label="Your course progress">
+          <div class="progress-copy">
+            <span class="section-label">Your progress</span>
+            <div class="progress-numbers"><strong id="progressPercent">0%</strong><span id="progressText">0 of 0 lectures complete</span></div>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="progressText">
+            <span id="progressBar"></span>
+          </div>
+          <button class="text-button" id="resetProgress" type="button">Reset progress</button>
+        </section>
+
+        <section class="content-grid">
+          <aside class="course-sidebar">
+            <div class="sidebar-section">
+              <span class="section-label">Course outline</span>
+              <nav id="weekNav" class="week-nav" aria-label="Course weeks"></nav>
+            </div>
+            <div class="sidebar-section course-facts" id="courseFacts"></div>
+          </aside>
+
+          <section class="curriculum" aria-labelledby="curriculumHeading">
+            <div class="curriculum-header">
+              <div>
+                <span class="section-label">Curriculum</span>
+                <h2 id="curriculumHeading">Start learning</h2>
+              </div>
+              <label class="search" aria-label="Search lectures">
+                <span class="search-icon" aria-hidden="true"></span>
+                <input id="searchInput" type="search" placeholder="Search lectures" autocomplete="off" />
+              </label>
+            </div>
+            <div id="emptyState" class="empty-state" hidden>No lectures match your search.</div>
+            <div id="weeks" class="weeks"></div>
+          </section>
+        </section>
+      </main>
+      <footer class="site-footer">
+        <p>© FreeCourseIndex. Course content remains the property of its respective owners.</p>
+        <p>This website acts only as a public index for publicly available videos on YouTube.</p>
+      </footer>
+    </div>
+
+    <template id="sunIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></template>
+    <template id="moonIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.6 15.8A9 9 0 1 1 8.2 3.4 7 7 0 0 0 20.6 15.8Z"/></svg></template>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
