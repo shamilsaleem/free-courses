@@ -40,6 +40,19 @@ export const courses = [
 
 The catalog automatically uses available title, instructor, institution, and first-video data. Missing optional details are simply not shown.
 
+### Optional video start time
+
+To link a lecture to a particular point in its YouTube video, add `startTime` as a number of seconds. The site will automatically append YouTube's `t` parameter to the lecture links. `timestamp` is also accepted as an alias.
+
+```js
+{
+  id: 1,
+  title: "Introduction",
+  youtubeId: "DtH4p331VhU",
+  startTime: 90, // Opens the video at 1 minute 30 seconds
+}
+```
+
 ## Project structure
 
 ```text

@@ -82,14 +82,24 @@ function createWeek(week, shouldOpen) {
 function createLecture(lesson) {
   const isDone = completed.has(lesson.id);
   const row = document.createElement("article"); row.className = `lecture${isDone ? " is-complete" : ""}`; row.dataset.lessonId = lesson.id;
-  const videoUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(lesson.youtubeId)}`;
+  const videoUrl = youtubeUrl(lesson);
+  const videoHref = videoUrl.replace(/&/g, "&amp;");
   row.innerHTML = `
-    <a class="thumbnail" href="${videoUrl}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${lesson.title} on YouTube"><img src="${youtubeThumbnail(lesson.youtubeId)}" alt="" loading="lazy" /><span class="play"></span></a>
-    <div class="lecture-info"><span class="lecture-index">LECTURE ${String(lesson.id).padStart(2, "0")}</span><a class="lecture-title" href="${videoUrl}" target="_blank" rel="noopener noreferrer"></a></div>
+    <a class="thumbnail" href="${videoHref}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${lesson.title} on YouTube"><img src="${youtubeThumbnail(lesson.youtubeId)}" alt="" loading="lazy" /><span class="play"></span></a>
+    <div class="lecture-info"><span class="lecture-index">LECTURE ${String(lesson.id).padStart(2, "0")}</span><a class="lecture-title" href="${videoHref}" target="_blank" rel="noopener noreferrer"></a></div>
     <button class="complete-toggle" type="button" aria-label="Mark ${lesson.title} as ${isDone ? "incomplete" : "complete"}" aria-pressed="${isDone}">${checkIcon()}</button>`;
   row.querySelector(".lecture-title").textContent = lesson.title;
   row.querySelector(".complete-toggle").addEventListener("click", () => toggleLesson(lesson.id));
   return row;
+}
+
+function youtubeUrl(lesson) {
+  const url = new URL("https://www.youtube.com/watch");
+  url.searchParams.set("v", lesson.youtubeId);
+  const value = lesson.startTime ?? lesson.timestamp;
+  const startTime = typeof value === "number" ? value : Number.NaN;
+  if (Number.isFinite(startTime) && startTime >= 0) url.searchParams.set("t", String(Math.floor(startTime)));
+  return url.toString();
 }
 
 function toggleLesson(id) {

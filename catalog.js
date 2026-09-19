@@ -1,4 +1,6 @@
-import { courses } from "./courses/index.js";
+// Keep the manifest and course modules fresh when returning to the catalog.
+const cacheVersion = Date.now();
+const { courses } = await import(`./courses/index.js?version=${cacheVersion}`);
 
 const themeKey = "free-course-index:theme";
 const $ = (selector) => document.querySelector(selector);
@@ -26,7 +28,7 @@ function youtubeThumbnail(videoId) {
 
 async function renderCatalog() {
   const loadedCourses = await Promise.all(courses.map(async (entry) => {
-    try { return { entry, course: (await import(`./courses/${entry.file}`)).default }; }
+    try { return { entry, course: (await import(`./courses/${entry.file}?version=${cacheVersion}`)).default }; }
     catch { return null; }
   }));
   const validCourses = loadedCourses.filter(Boolean);
