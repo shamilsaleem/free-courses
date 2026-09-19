@@ -63,12 +63,14 @@ function renderWeeks(filter = "") {
     lessons: week.lessons.filter((lesson) => lesson.title.toLowerCase().includes(query)),
   })).filter((week) => week.lessons.length);
   $("#emptyState").hidden = shownWeeks.length > 0;
-  container.replaceChildren(...shownWeeks.map((week, index) => createWeek(week, Boolean(query) || index === 0)));
+  const activeWeekIndex = shownWeeks.findIndex((week) => week.lessons.some((lesson) => !completed.has(lesson.id)));
+  const defaultWeekIndex = activeWeekIndex === -1 ? shownWeeks.length - 1 : activeWeekIndex;
+  container.replaceChildren(...shownWeeks.map((week, index) => createWeek(week, Boolean(query) || index === defaultWeekIndex)));
 }
 
 function createWeek(week, shouldOpen) {
   const completeCount = week.lessons.filter((lesson) => completed.has(lesson.id)).length;
-  const details = document.createElement("details"); details.className = "week"; details.id = `week-${week.week}`; details.open = shouldOpen;
+  const details = document.createElement("details"); details.className = "week"; details.id = `week-${week.week}`; details.dataset.week = week.week; details.open = shouldOpen;
   const summary = document.createElement("summary");
   summary.innerHTML = `<span class="week-number">WEEK ${String(week.week).padStart(2, "0")}</span><span class="week-title"></span><span class="week-progress"><span>${completeCount}/${week.lessons.length}</span><i class="chevron"></i></span>`;
   summary.querySelector(".week-title").textContent = week.title.replace(/^Week\s+\d+\s*/i, "");
@@ -91,11 +93,38 @@ function createLecture(lesson) {
 }
 
 function toggleLesson(id) {
-  completed.has(id) ? completed.delete(id) : completed.add(id);
-  persist(); renderWeeks($("#searchInput").value); updateProgress();
+  const wasCompleted = completed.has(id);
+  wasCompleted ? completed.delete(id) : completed.add(id);
+  persist();
+
+  const row = document.querySelector(`[data-lesson-id="${id}"]`);
+  row?.classList.toggle("is-complete", !wasCompleted);
+  const button = row?.querySelector(".complete-toggle");
+  if (button) {
+    const lesson = lessons.find((item) => item.id === id);
+    button.setAttribute("aria-pressed", String(!wasCompleted));
+    button.setAttribute("aria-label", `Mark ${lesson.title} as ${wasCompleted ? "complete" : "incomplete"}`);
+  }
+  updateVisibleWeekProgress();
+
+  const currentWeek = course.curriculum.find((week) => week.lessons.some((lesson) => lesson.id === id));
+  if (!wasCompleted && currentWeek && currentWeek.lessons.every((lesson) => completed.has(lesson.id))) {
+    document.getElementById(`week-${currentWeek.week}`)?.removeAttribute("open");
+    const nextWeek = course.curriculum.find((week) => week.week > currentWeek.week && week.lessons.some((lesson) => !completed.has(lesson.id)));
+    document.getElementById(`week-${nextWeek?.week}`)?.setAttribute("open", "");
+  }
+  updateProgress();
 }
 
 function persist() { localStorage.setItem(storageKey, JSON.stringify([...completed])); }
+
+function updateVisibleWeekProgress() {
+  document.querySelectorAll(".week").forEach((week) => {
+    const lectureRows = week.querySelectorAll(".lecture");
+    const completeCount = week.querySelectorAll(".lecture.is-complete").length;
+    week.querySelector(".week-progress span").textContent = `${completeCount}/${lectureRows.length}`;
+  });
+}
 
 function updateProgress() {
   const count = completed.size;
