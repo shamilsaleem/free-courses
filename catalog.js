@@ -1,7 +1,3 @@
-// Keep the manifest and course modules fresh when returning to the catalog.
-const cacheVersion = Date.now();
-const { courses } = await import(`./courses/index.js?version=${cacheVersion}`);
-
 const themeKey = "free-course-index:theme";
 const $ = (selector) => document.querySelector(selector);
 const icon = (name) => document.getElementById(name).content.cloneNode(true);
@@ -15,7 +11,7 @@ function setTheme(theme) {
 }
 
 function courseDetail(course) {
-  return [course.instructors?.join(", "), course.institute].filter(Boolean).join(" · ");
+  return [course.instructors?.join(", "), course.institute].filter(Boolean).join(" · ") || course.duration || "";
 }
 
 function firstVideoId(course) {
@@ -27,9 +23,23 @@ function youtubeThumbnail(videoId) {
 }
 
 async function renderCatalog() {
+  const cacheVersion = Date.now();
+  let courses = [];
+  try {
+    const manifest = await import(`./courses/index.js?version=${cacheVersion}`);
+    courses = manifest.courses || [];
+  } catch (err) {
+    console.error("Failed to load course catalog manifest:", err);
+  }
+
   const loadedCourses = await Promise.all(courses.map(async (entry) => {
-    try { return { entry, course: (await import(`./courses/${entry.file}?version=${cacheVersion}`)).default }; }
-    catch { return null; }
+    try {
+      const module = await import(`./courses/${entry.file}?version=${cacheVersion}`);
+      return { entry, course: module.default };
+    } catch (err) {
+      console.error(`Failed to load course ${entry.id} (${entry.file}):`, err);
+      return null;
+    }
   }));
   const validCourses = loadedCourses.filter(Boolean);
   $("#courseCount").textContent = `${validCourses.length} ${validCourses.length === 1 ? "course" : "courses"}`;
@@ -57,3 +67,9 @@ async function renderCatalog() {
 $("#themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
 setTheme(localStorage.getItem(themeKey) || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
 renderCatalog();
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    renderCatalog();
+  }
+});

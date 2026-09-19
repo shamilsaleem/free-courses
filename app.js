@@ -1,6 +1,7 @@
 const courseNumber = new URLSearchParams(window.location.search).get("course") || "0";
 if (!/^\d+$/.test(courseNumber)) window.location.replace("./index.html");
-const { default: course } = await import(`./courses/${courseNumber}.js`);
+const cacheVersion = Date.now();
+const { default: course } = await import(`./courses/${courseNumber}.js?version=${cacheVersion}`);
 const lessons = course.curriculum.flatMap((week) => week.lessons);
 const storageKey = `free-course-index:${course.uuid || course.courseId || course.title}:completed`;
 const legacyStorageKey = `course-library:${course.courseId || course.title}:completed`;
