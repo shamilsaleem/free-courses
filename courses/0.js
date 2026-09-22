@@ -4,9 +4,7 @@ const courseData = {
   instructors: ["Prof. Ashok Rao", "Prof. Arulalan Rajan"],
   institute: "IISc Bangalore",
   contentType: "Video",
-  courseId: "106108702",
   duration: "12 weeks",
-  level: "Undergraduate/Postgraduate",
   language: "English",
   description: "This course provides a holistic approach to the mathematical foundations for machine learning. It develops mathematical ideas for machine-learning applications through intuition and visualization, covering linear algebra, probability and statistics, and multivariable calculus.",
   curriculum: [

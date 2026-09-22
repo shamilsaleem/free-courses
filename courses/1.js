@@ -1,6 +1,7 @@
 const courseData = {
   uuid: "65c31f2f-634e-4f98-b8d5-553b0245d11d",
   title: "Data Structures & Algorithms Full Course",
+  institute: "Destination FAANG - feeCodeCamp.org",
   contentType: "Video",
   duration: "48 hours 48 minutes",
   description: "A complete timestamped introduction to technical interviews, algorithm analysis, data structures, and core data structures and algorithms topics.",
