@@ -29,7 +29,8 @@ Then open `http://127.0.0.1:8000` in a browser.
 1. Create a numbered JavaScript module in `courses/`, for example `courses/1.js`.
 2. Export a course object in the same format as `courses/0.js`.
 3. Give the course a unique, permanent `uuid` value.
-4. Register it in `courses/index.js`:
+4. Or just use `courses/gen_js.py` Python script to generate .js file from a YouTube playlist url.
+5. Register it in `courses/index.js`:
 
 ```js
 export const courses = [

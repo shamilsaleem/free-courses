@@ -85,7 +85,7 @@ def write_js(course_data, output_file):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python playlist_to_js.py <playlist_url> [output.js]")
+        print("Usage: python gen_js.py <playlist_url> [output.js]")
         sys.exit(1)
 
     playlist_url = sys.argv[1]
